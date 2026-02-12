@@ -1,10 +1,12 @@
 // game.js - Lógica de movimento e colisão
 
-// Selecionando o jogador e os obstáculos
+// Selecionando elementos da tela
+const startScreen = document.getElementById('start-screen');
+const gameScreen = document.getElementById('game-screen');
 const player = document.getElementById('player');
 const obstacles = document.querySelectorAll('.obstacle');
 
-// Definindo a posição inicial do jogador
+// Variáveis do jogador
 let playerX = 0;
 let playerY = 0;
 let speed = 10; // Velocidade de movimento
@@ -63,10 +65,20 @@ function resetGame() {
   updatePlayerPosition();
 }
 
-// Detectando as teclas pressionadas
+// Iniciar o jogo ao pressionar Enter
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowUp') movePlayer('up');
-  if (event.key === 'ArrowDown') movePlayer('down');
-  if (event.key === 'ArrowLeft') movePlayer('left');
-  if (event.key === 'ArrowRight') movePlayer('right');
+  // Quando pressionar Enter, esconder a tela inicial e mostrar o jogo
+  if (event.key === 'Enter') {
+    startScreen.style.display = 'none';  // Esconde a tela inicial
+    gameScreen.style.display = 'block';  // Mostra o jogo
+    document.removeEventListener('keydown', arguments.callee);  // Remove o evento após iniciar o jogo
+  }
+
+  // Movimentar o jogador (após iniciar o jogo)
+  if (gameScreen.style.display === 'block') {
+    if (event.key === 'ArrowUp') movePlayer('up');
+    if (event.key === 'ArrowDown') movePlayer('down');
+    if (event.key === 'ArrowLeft') movePlayer('left');
+    if (event.key === 'ArrowRight') movePlayer('right');
+  }
 });
