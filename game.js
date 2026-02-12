@@ -5,6 +5,7 @@ let playerX = 140;
 let playerY = 420;
 let speed = 2;
 let score = 0;
+let record = localStorage.getItem("record") || 0;
 
 let obstacles = [];
 let running = false;
@@ -14,82 +15,69 @@ function startGame() {
     score = 0;
     playerX = 140;
     playerY = 420;
+    obstacles = [];
+    speed = 2;
     gameLoop();
-    document.getElementById('startScreen').classList.add('hidden');  // Esconde a tela inicial
+    document.getElementById('startScreen').classList.add('hidden'); 
 }
 
-// Detecta pressionamento de tecla (PC)
-document.addEventListener("keydown", (e) => {
-    if (!running && e.key === "Enter") startGame();  // Inicia o jogo quando pressionar Enter
-
-    if (running) {
-        if (e.key === "ArrowLeft") move(-40); // Mover para a esquerda
-        if (e.key === "ArrowRight") move(40); // Mover para a direita
-    }
-});
-
-// Função para movimentar o personagem
+// Função de movimentação do personagem
 function move(dir) {
     playerX += dir;
-    playerX = Math.max(0, Math.min(canvas.width - 40, playerX)); // Limite da tela
+    playerX = Math.max(0, Math.min(canvas.width - 40, playerX)); 
 }
 
-// Função de controle de toque (mobile)
+// Controle de toque (mobile)
 function handleTouch(e) {
     const touchX = e.touches[0].clientX;
-    const sectionWidth = canvas.width / 5;  // Divide a tela em 5 partes iguais
+    const sectionWidth = canvas.width / 5;
 
-    // Ajusta a posição do personagem para a parte tocada
     if (touchX < sectionWidth) {
-        playerX = sectionWidth / 2; // Move para a primeira seção
+        playerX = sectionWidth / 2;
     } else if (touchX < sectionWidth * 2) {
-        playerX = sectionWidth * 1.5; // Move para a segunda seção
+        playerX = sectionWidth * 1.5;
     } else if (touchX < sectionWidth * 3) {
-        playerX = sectionWidth * 2.5; // Move para a terceira seção
+        playerX = sectionWidth * 2.5;
     } else if (touchX < sectionWidth * 4) {
-        playerX = sectionWidth * 3.5; // Move para a quarta seção
+        playerX = sectionWidth * 3.5;
     } else {
-        playerX = sectionWidth * 4.5; // Move para a quinta seção
+        playerX = sectionWidth * 4.5;
     }
 }
 
-// Detecta toque na tela (para dispositivos móveis)
-canvas.addEventListener("touchstart", (e) => {
-    if (!running) startGame();  // Inicia o jogo ao tocar na tela
-    handleTouch(e);  // Mover o personagem para a área clicada
-});
-
-// Detecta toque na tela inicial (para iniciar o jogo no celular)
-document.getElementById("startScreen").addEventListener("touchstart", (e) => {
-    startGame(); // Iniciar o jogo ao tocar na tela inicial
-});
-
-// Desenha o cenário
-function drawRoad() {
-    ctx.fillStyle = "#333"; // Cor de fundo (pista)
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Desenhando linhas para dividir a pista em 5 partes
-    ctx.strokeStyle = "#999";
-    ctx.lineWidth = 2;
-    for (let i = 1; i <= 4; i++) {
-        ctx.moveTo(i * (canvas.width / 5), 0);
-        ctx.lineTo(i * (canvas.width / 5), canvas.height);
-        ctx.stroke();
-    }
-}
-
-// Desenha o personagem
+// Desenha o personagem com melhorias
 function drawPlayer() {
-    ctx.fillStyle = "#00FF00"; // Cor do personagem (arquiivista)
-    ctx.fillRect(playerX, playerY, 40, 40); // Personagem representado por um quadrado
+    ctx.fillStyle = "#F4C542"; 
+    ctx.fillRect(playerX + 10, playerY + 5, 20, 20); 
+
+    ctx.fillStyle = "#00AEEF"; 
+    ctx.fillRect(playerX + 5, playerY + 25, 30, 30); 
+
+    ctx.fillStyle = "#8B8B8B"; 
+    ctx.fillRect(playerX + 5, playerY + 55, 12, 15); 
+    ctx.fillRect(playerX + 20, playerY + 55, 12, 15); 
+
+    ctx.fillStyle = "#3B3B3B"; 
+    ctx.fillRect(playerX + 5, playerY + 70, 12, 5); 
+    ctx.fillRect(playerX + 20, playerY + 70, 12, 5); 
+
+    ctx.fillStyle = "#FFDD44"; 
+    ctx.fillRect(playerX + 10, playerY + 20, 20, 10); 
 }
 
-// Desenha os obstáculos
+// Desenha obstáculos (gavetas de arquivo)
 function drawObstacles() {
-    ctx.fillStyle = "#FF4444"; // Cor dos obstáculos (armários)
     obstacles.forEach((obs) => {
-        ctx.fillRect(obs.x, obs.y, 40, 60); // Obstáculo representado por um retângulo
+        ctx.fillStyle = "#888"; 
+        ctx.fillRect(obs.x, obs.y, 40, 60); 
+
+        ctx.strokeStyle = "#444"; 
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 5; i++) {
+            ctx.moveTo(obs.x, obs.y + i * 12);
+            ctx.lineTo(obs.x + 40, obs.y + i * 12);
+            ctx.stroke();
+        }
     });
 }
 
@@ -101,15 +89,18 @@ function spawnObstacle() {
 
 // Função de colisão
 function collide(a, b) {
-    return !(
-        a.right < b.left ||
-        a.left > b.right ||
-        a.bottom < b.top ||
-        a.top > b.bottom
-    );
+    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
 }
 
-// Função de loop do jogo
+// Desenha a pontuação e o recorde
+function drawScore() {
+    ctx.fillStyle = "#fff";
+    ctx.font = "16px Arial";
+    ctx.fillText("Pontos: " + score, 10, 20);
+    ctx.fillText("Recorde: " + record, canvas.width - 100, 20);
+}
+
+// Função do loop do jogo
 function gameLoop() {
     if (!running) return;
 
@@ -118,12 +109,16 @@ function gameLoop() {
     drawRoad();
     drawPlayer();
     drawObstacles();
+    drawScore();
 
-    // Atualizar obstáculos
     obstacles.forEach((obs, i) => {
         obs.y += speed;
         if (collide({ left: playerX, top: playerY, right: playerX + 40, bottom: playerY + 40 }, { left: obs.x, top: obs.y, right: obs.x + 40, bottom: obs.y + 60 })) {
             running = false;
+            if (score > record) {
+                record = score;
+                localStorage.setItem("record", record); 
+            }
             alert("Fim de expediente! Pontos: " + score);
             location.reload();
         }
@@ -131,6 +126,9 @@ function gameLoop() {
         if (obs.y > canvas.height) {
             obstacles.splice(i, 1);
             score++;
+            if (score % 10 === 0) {
+                speed += 0.5; 
+            }
         }
     });
 
