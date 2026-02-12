@@ -10,6 +10,18 @@ let record = localStorage.getItem("record") || 0;
 let obstacles = [];
 let running = false;
 
+// Tela de início - Exibe mensagem
+function showStartScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "30px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("O Arquivista", canvas.width / 2, canvas.height / 2 - 40);
+    ctx.font = "20px Arial";
+    ctx.fillText("Pressione Enter ou Toque para Iniciar", canvas.width / 2, canvas.height / 2 + 40);
+}
+
+// Função para iniciar o jogo
 function startGame() {
     running = true;
     score = 0;
@@ -18,20 +30,21 @@ function startGame() {
     obstacles = [];
     speed = 2;
     gameLoop();
-    document.getElementById('startScreen').classList.add('hidden'); 
+    document.getElementById('startScreen').classList.add('hidden');  // Esconde a tela inicial
+    showStartScreen();  // Exibe a tela de início até o jogador iniciar
 }
 
-// Função de movimentação do personagem
-function move(dir) {
-    playerX += dir;
-    playerX = Math.max(0, Math.min(canvas.width - 40, playerX)); 
-}
+// Detecta pressionamento de tecla (PC)
+document.addEventListener("keydown", (e) => {
+    if (!running && e.key === "Enter") startGame();  // Inicia o jogo quando pressionar Enter
+});
 
-// Controle de toque (mobile)
+// Função de controle de toque (mobile)
 function handleTouch(e) {
     const touchX = e.touches[0].clientX;
-    const sectionWidth = canvas.width / 5;
+    const sectionWidth = canvas.width / 5;  // Divide a tela em 5 partes iguais
 
+    // Ajusta a posição do personagem para a parte tocada
     if (touchX < sectionWidth) {
         playerX = sectionWidth / 2;
     } else if (touchX < sectionWidth * 2) {
@@ -45,7 +58,13 @@ function handleTouch(e) {
     }
 }
 
-// Desenha o personagem com melhorias
+// Detecta toque na tela (para dispositivos móveis)
+canvas.addEventListener("touchstart", (e) => {
+    if (!running) startGame();  // Inicia o jogo ao tocar na tela
+    handleTouch(e);  // Mover o personagem para a área clicada
+});
+
+// Desenha o personagem
 function drawPlayer() {
     ctx.fillStyle = "#F4C542"; 
     ctx.fillRect(playerX + 10, playerY + 5, 20, 20); 
@@ -65,7 +84,7 @@ function drawPlayer() {
     ctx.fillRect(playerX + 10, playerY + 20, 20, 10); 
 }
 
-// Desenha obstáculos (gavetas de arquivo)
+// Desenha obstáculos
 function drawObstacles() {
     obstacles.forEach((obs) => {
         ctx.fillStyle = "#888"; 
@@ -139,3 +158,6 @@ function gameLoop() {
 setInterval(() => {
     if (running) spawnObstacle();
 }, 900);
+
+// Inicializando o jogo ao carregar a página
+window.onload = showStartScreen;
