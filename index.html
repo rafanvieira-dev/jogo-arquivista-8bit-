@@ -1,26 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>O Arquivista</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Arquivista</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="game">
+  <!-- TELA INICIAL -->
+  <div id="startScreen" class="start">
+      <h1 class="title">O ARQUIVISTA</h1>
+      <p class="blink">APERTE ENTER OU TOQUE</p>
+  </div>
 
-    <!-- TELA INICIAL -->
-    <div id="startScreen" class="start">
-        <h1 class="title">O ARQUIVISTA</h1>
-        <p class="blink">APERTE ENTER OU TOQUE</p>
-    </div>
-
-    <!-- JOGO -->
-    <div id="road" class="road hidden">
-        <div id="player" class="player"></div>
-        <div id="score" class="score">0</div>
-    </div>
+  <!-- JOGO -->
+  <canvas id="gameCanvas" width="320" height="480"></canvas>
 
 </div>
 
