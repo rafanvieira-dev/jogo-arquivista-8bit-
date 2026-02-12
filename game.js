@@ -1,89 +1,88 @@
-// game.js - Lógica de movimento e colisão
+const startScreen = document.getElementById("startScreen");
+const road = document.getElementById("road");
+const player = document.getElementById("player");
+const scoreEl = document.getElementById("score");
 
-// Selecionando elementos da tela
-const startScreen = document.getElementById('start-screen');
-const gameScreen = document.getElementById('game-screen');
-const player = document.getElementById('player');
-const obstacles = document.querySelectorAll('.obstacle');
+let running = false;
+let playerX = 140;
+let speed = 2;
+let score = 0;
 
-// Controles móveis
-const startBtn = document.getElementById('start-btn');
-const leftBtn = document.getElementById('left');
-const rightBtn = document.getElementById('right');
+let obstacles = [];
 
-// Variáveis do jogador
-let playerX = 0;
-let speed = 10; // Velocidade de movimento
-
-// Função para mover o jogador (somente esquerda e direita)
-function movePlayer(direction) {
-  switch (direction) {
-    case 'left':
-      if (playerX > 0) playerX -= speed;
-      break;
-    case 'right':
-      if (playerX < 570) playerX += speed;
-      break;
-  }
-  updatePlayerPosition();
-  checkCollision();
+function startGame(){
+    startScreen.classList.add("hidden");
+    road.classList.remove("hidden");
+    running = true;
+    gameLoop();
 }
 
-// Função para atualizar a posição do jogador
-function updatePlayerPosition() {
-  player.style.left = playerX + 'px';
-}
+document.addEventListener("keydown", e=>{
+    if(!running && e.key==="Enter") startGame();
 
-// Função para verificar colisões com obstáculos
-function checkCollision() {
-  obstacles.forEach(obstacle => {
-    const obstacleX = obstacle.offsetLeft;
-    const obstacleY = obstacle.offsetTop;
-    const obstacleWidth = obstacle.offsetWidth;
-    const obstacleHeight = obstacle.offsetHeight;
-
-    // Verificar colisão com o jogador
-    if (
-      playerX < obstacleX + obstacleWidth &&
-      playerX + 30 > obstacleX &&
-      obstacleY < player.offsetTop + 30 &&
-      obstacleY + obstacleHeight > player.offsetTop
-    ) {
-      alert("Colidiu com um gaveteiro! Game Over.");
-      resetGame();
+    if(running){
+        if(e.key==="ArrowLeft") move(-40);
+        if(e.key==="ArrowRight") move(40);
     }
-  });
-}
-
-// Função para resetar o jogo
-function resetGame() {
-  playerX = 0;
-  updatePlayerPosition();
-}
-
-// Iniciar o jogo ao pressionar Enter ou tocar no botão Iniciar
-startBtn.addEventListener('click', startGame);
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    startGame();
-  }
 });
 
-// Função para iniciar o jogo
-function startGame() {
-  startScreen.style.display = 'none';  // Esconde a tela inicial
-  gameScreen.style.display = 'block';  // Mostra o jogo
-  document.removeEventListener('keydown', arguments.callee);  // Remove o evento após iniciar o jogo
+document.addEventListener("touchstart", ()=>{
+    if(!running) startGame();
+});
+
+function move(dir){
+    playerX += dir;
+    playerX = Math.max(0, Math.min(280, playerX));
+    player.style.left = playerX+"px";
 }
 
-// Movimentar o jogador (após iniciar o jogo)
-leftBtn.addEventListener('click', () => movePlayer('left'));
-rightBtn.addEventListener('click', () => movePlayer('right'));
+/* criar armários */
+function spawnObstacle(){
+    let obs = document.createElement("div");
+    obs.className="obstacle";
+    obs.style.left = (Math.floor(Math.random()*8)*40)+"px";
+    obs.style.top = "-60px";
+    road.appendChild(obs);
+    obstacles.push(obs);
+}
 
-// Detectar as teclas pressionadas (para PC)
-document.addEventListener('keydown', (event) => {
-  if (gameScreen.style.display === 'block') {
-    if (event.key === 'ArrowLeft') movePlayer('left');
-    if (event.key === 'ArrowRight') movePlayer('right');
-  }
-});
+setInterval(()=>{
+    if(running) spawnObstacle();
+},900);
+
+/* colisão */
+function collide(a,b){
+    return !(
+        a.right<b.left ||
+        a.left>b.right ||
+        a.bottom<b.top ||
+        a.top>b.bottom
+    );
+}
+
+function gameLoop(){
+    if(!running) return;
+
+    obstacles.forEach((obs,i)=>{
+        let top = parseInt(obs.style.top);
+        top += speed;
+        obs.style.top = top+"px";
+
+        if(collide(player.getBoundingClientRect(),obs.getBoundingClientRect())){
+            running=false;
+            alert("Fim de expediente! Pontos: "+score);
+            location.reload();
+        }
+
+        if(top>480){
+            obs.remove();
+            obstacles.splice(i,1);
+            score++;
+            scoreEl.textContent=score;
+
+            if(score%10===0) speed+=0.5;
+        }
+    });
+
+    requestAnimationFrame(gameLoop);
+}
