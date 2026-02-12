@@ -15,14 +15,16 @@ function startGame() {
     playerX = 140;
     playerY = 420;
     gameLoop();
+    document.getElementById('startScreen').classList.add('hidden');  // Esconde a tela inicial
 }
 
+// Detecta pressionamento de tecla (PC)
 document.addEventListener("keydown", (e) => {
-    if (!running && e.key === "Enter") startGame();
+    if (!running && e.key === "Enter") startGame();  // Inicia o jogo quando pressionar Enter
 
     if (running) {
-        if (e.key === "ArrowLeft") move(-40);
-        if (e.key === "ArrowRight") move(40);
+        if (e.key === "ArrowLeft") move(-40); // Mover para a esquerda
+        if (e.key === "ArrowRight") move(40); // Mover para a direita
     }
 });
 
@@ -32,7 +34,7 @@ function move(dir) {
     playerX = Math.max(0, Math.min(canvas.width - 40, playerX)); // Limite da tela
 }
 
-// Função de controle de toque
+// Função de controle de toque (mobile)
 function handleTouch(e) {
     const touchX = e.touches[0].clientX;
 
@@ -46,8 +48,13 @@ function handleTouch(e) {
 
 // Detecta toque na tela (para dispositivos móveis)
 canvas.addEventListener("touchstart", (e) => {
-    if (!running) startGame();
-    handleTouch(e); // Mover para a esquerda ou direita com o toque
+    if (!running) startGame();  // Inicia o jogo ao tocar na tela
+    handleTouch(e);  // Mover para a esquerda ou direita com o toque
+});
+
+// Detecta toque na tela inicial (para iniciar o jogo no celular)
+document.getElementById("startScreen").addEventListener("touchstart", (e) => {
+    startGame(); // Iniciar o jogo ao tocar na tela inicial
 });
 
 // Desenha o cenário
