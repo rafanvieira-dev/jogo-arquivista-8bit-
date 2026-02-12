@@ -1,88 +1,129 @@
-const startScreen = document.getElementById("startScreen");
-const road = document.getElementById("road");
-const player = document.getElementById("player");
-const scoreEl = document.getElementById("score");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-let running = false;
 let playerX = 140;
+let playerY = 420;
 let speed = 2;
 let score = 0;
 
 let obstacles = [];
+let running = false;
 
-function startGame(){
-    startScreen.classList.add("hidden");
-    road.classList.remove("hidden");
+function startGame() {
     running = true;
+    score = 0;
+    playerX = 140;
+    playerY = 420;
     gameLoop();
 }
 
-document.addEventListener("keydown", e=>{
-    if(!running && e.key==="Enter") startGame();
+document.addEventListener("keydown", (e) => {
+    if (!running && e.key === "Enter") startGame();
 
-    if(running){
-        if(e.key==="ArrowLeft") move(-40);
-        if(e.key==="ArrowRight") move(40);
+    if (running) {
+        if (e.key === "ArrowLeft") move(-40);
+        if (e.key === "ArrowRight") move(40);
     }
 });
 
-document.addEventListener("touchstart", ()=>{
-    if(!running) startGame();
+// Função para movimentar o personagem
+function move(dir) {
+    playerX += dir;
+    playerX = Math.max(0, Math.min(canvas.width - 40, playerX)); // Limite da tela
+}
+
+// Função de controle de toque
+function handleTouch(e) {
+    const touchX = e.touches[0].clientX;
+
+    // Se o toque for na metade esquerda
+    if (touchX < canvas.width / 2) {
+        move(-40); // Mover para a esquerda
+    } else {
+        move(40); // Mover para a direita
+    }
+}
+
+// Detecta toque na tela (para dispositivos móveis)
+canvas.addEventListener("touchstart", (e) => {
+    if (!running) startGame();
+    handleTouch(e); // Mover para a esquerda ou direita com o toque
 });
 
-function move(dir){
-    playerX += dir;
-    playerX = Math.max(0, Math.min(280, playerX));
-    player.style.left = playerX+"px";
+// Desenha o cenário
+function drawRoad() {
+    ctx.fillStyle = "#333"; // Cor de fundo (pista)
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Desenhando prateleiras/linha do escritório (simulando com linhas simples)
+    ctx.strokeStyle = "#999";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < canvas.height; i += 40) {
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+    }
 }
 
-/* criar armários */
-function spawnObstacle(){
-    let obs = document.createElement("div");
-    obs.className="obstacle";
-    obs.style.left = (Math.floor(Math.random()*8)*40)+"px";
-    obs.style.top = "-60px";
-    road.appendChild(obs);
-    obstacles.push(obs);
+// Desenha o personagem
+function drawPlayer() {
+    ctx.fillStyle = "#00FF00"; // Cor do personagem (arquiivista)
+    ctx.fillRect(playerX, playerY, 40, 40); // Personagem representado por um quadrado
 }
 
-setInterval(()=>{
-    if(running) spawnObstacle();
-},900);
+// Desenha os obstáculos
+function drawObstacles() {
+    ctx.fillStyle = "#FF4444"; // Cor dos obstáculos (armários)
+    obstacles.forEach((obs) => {
+        ctx.fillRect(obs.x, obs.y, 40, 60); // Obstáculo representado por um retângulo
+    });
+}
 
-/* colisão */
-function collide(a,b){
+// Função para gerar obstáculos
+function spawnObstacle() {
+    let obstacleX = Math.floor(Math.random() * (canvas.width / 40)) * 40;
+    obstacles.push({ x: obstacleX, y: -60 });
+}
+
+// Função de colisão
+function collide(a, b) {
     return !(
-        a.right<b.left ||
-        a.left>b.right ||
-        a.bottom<b.top ||
-        a.top>b.bottom
+        a.right < b.left ||
+        a.left > b.right ||
+        a.bottom < b.top ||
+        a.top > b.bottom
     );
 }
 
-function gameLoop(){
-    if(!running) return;
+// Função de loop do jogo
+function gameLoop() {
+    if (!running) return;
 
-    obstacles.forEach((obs,i)=>{
-        let top = parseInt(obs.style.top);
-        top += speed;
-        obs.style.top = top+"px";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if(collide(player.getBoundingClientRect(),obs.getBoundingClientRect())){
-            running=false;
-            alert("Fim de expediente! Pontos: "+score);
+    drawRoad();
+    drawPlayer();
+    drawObstacles();
+
+    // Atualizar obstáculos
+    obstacles.forEach((obs, i) => {
+        obs.y += speed;
+        if (collide({ left: playerX, top: playerY, right: playerX + 40, bottom: playerY + 40 }, { left: obs.x, top: obs.y, right: obs.x + 40, bottom: obs.y + 60 })) {
+            running = false;
+            alert("Fim de expediente! Pontos: " + score);
             location.reload();
         }
 
-        if(top>480){
-            obs.remove();
-            obstacles.splice(i,1);
+        if (obs.y > canvas.height) {
+            obstacles.splice(i, 1);
             score++;
-            scoreEl.textContent=score;
-
-            if(score%10===0) speed+=0.5;
         }
     });
 
     requestAnimationFrame(gameLoop);
 }
+
+// Geração de obstáculos a cada intervalo
+setInterval(() => {
+    if (running) spawnObstacle();
+}, 900);
