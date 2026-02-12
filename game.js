@@ -6,20 +6,18 @@ const gameScreen = document.getElementById('game-screen');
 const player = document.getElementById('player');
 const obstacles = document.querySelectorAll('.obstacle');
 
+// Controles móveis
+const startBtn = document.getElementById('start-btn');
+const leftBtn = document.getElementById('left');
+const rightBtn = document.getElementById('right');
+
 // Variáveis do jogador
 let playerX = 0;
-let playerY = 0;
 let speed = 10; // Velocidade de movimento
 
-// Função para mover o jogador
+// Função para mover o jogador (somente esquerda e direita)
 function movePlayer(direction) {
   switch (direction) {
-    case 'up':
-      if (playerY > 0) playerY -= speed;
-      break;
-    case 'down':
-      if (playerY < 370) playerY += speed;
-      break;
     case 'left':
       if (playerX > 0) playerX -= speed;
       break;
@@ -33,7 +31,6 @@ function movePlayer(direction) {
 
 // Função para atualizar a posição do jogador
 function updatePlayerPosition() {
-  player.style.top = playerY + 'px';
   player.style.left = playerX + 'px';
 }
 
@@ -49,8 +46,8 @@ function checkCollision() {
     if (
       playerX < obstacleX + obstacleWidth &&
       playerX + 30 > obstacleX &&
-      playerY < obstacleY + obstacleHeight &&
-      playerY + 30 > obstacleY
+      obstacleY < player.offsetTop + 30 &&
+      obstacleY + obstacleHeight > player.offsetTop
     ) {
       alert("Colidiu com um gaveteiro! Game Over.");
       resetGame();
@@ -61,23 +58,31 @@ function checkCollision() {
 // Função para resetar o jogo
 function resetGame() {
   playerX = 0;
-  playerY = 0;
   updatePlayerPosition();
 }
 
-// Iniciar o jogo ao pressionar Enter
+// Iniciar o jogo ao pressionar Enter ou tocar no botão Iniciar
+startBtn.addEventListener('click', startGame);
 document.addEventListener('keydown', (event) => {
-  // Quando pressionar Enter, esconder a tela inicial e mostrar o jogo
   if (event.key === 'Enter') {
-    startScreen.style.display = 'none';  // Esconde a tela inicial
-    gameScreen.style.display = 'block';  // Mostra o jogo
-    document.removeEventListener('keydown', arguments.callee);  // Remove o evento após iniciar o jogo
+    startGame();
   }
+});
 
-  // Movimentar o jogador (após iniciar o jogo)
+// Função para iniciar o jogo
+function startGame() {
+  startScreen.style.display = 'none';  // Esconde a tela inicial
+  gameScreen.style.display = 'block';  // Mostra o jogo
+  document.removeEventListener('keydown', arguments.callee);  // Remove o evento após iniciar o jogo
+}
+
+// Movimentar o jogador (após iniciar o jogo)
+leftBtn.addEventListener('click', () => movePlayer('left'));
+rightBtn.addEventListener('click', () => movePlayer('right'));
+
+// Detectar as teclas pressionadas (para PC)
+document.addEventListener('keydown', (event) => {
   if (gameScreen.style.display === 'block') {
-    if (event.key === 'ArrowUp') movePlayer('up');
-    if (event.key === 'ArrowDown') movePlayer('down');
     if (event.key === 'ArrowLeft') movePlayer('left');
     if (event.key === 'ArrowRight') movePlayer('right');
   }
