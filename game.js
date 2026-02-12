@@ -30,8 +30,9 @@ function startGame() {
     obstacles = [];
     speed = 2;
     gameLoop();
-    document.getElementById('startScreen').classList.add('hidden');  // Esconde a tela inicial
-    showStartScreen();  // Exibe a tela de início até o jogador iniciar
+    
+    // Esconde a tela inicial
+    document.getElementById('startScreen').classList.add('hidden'); 
 }
 
 // Detecta pressionamento de tecla (PC)
@@ -60,8 +61,11 @@ function handleTouch(e) {
 
 // Detecta toque na tela (para dispositivos móveis)
 canvas.addEventListener("touchstart", (e) => {
-    if (!running) startGame();  // Inicia o jogo ao tocar na tela
-    handleTouch(e);  // Mover o personagem para a área clicada
+    if (!running) {
+        startGame();  // Inicia o jogo ao tocar na tela
+    } else {
+        handleTouch(e);  // Mover o personagem para a área clicada
+    }
 });
 
 // Desenha o personagem
@@ -125,7 +129,6 @@ function gameLoop() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawRoad();
     drawPlayer();
     drawObstacles();
     drawScore();
