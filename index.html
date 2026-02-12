@@ -1,35 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jogo do Arquivista - Estilo 8-Bit</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Arquivista</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="game-container">
-    <!-- Tela inicial -->
-    <div id="start-screen" class="start-screen">
-      <h1 id="game-title">O Arquivista</h1>
-      <p id="start-message">Iniciar: Aperte Enter ou toque em Iniciar</p>
-      <button id="start-btn" class="start-btn">Iniciar</button>
+
+<div class="game">
+
+    <!-- TELA INICIAL -->
+    <div id="startScreen" class="start">
+        <h1 class="title">O ARQUIVISTA</h1>
+        <p class="blink">APERTE ENTER OU TOQUE</p>
     </div>
 
-    <!-- Jogo em si (invisível até que o jogo comece) -->
-    <div id="game-screen" class="game-screen" style="display: none;">
-      <div id="player" class="player"></div> <!-- Arquivista -->
-      <div id="obstacle1" class="obstacle" style="top: 50px; left: 150px;"></div> <!-- Gaveteiro -->
-      <div id="obstacle2" class="obstacle" style="top: 150px; left: 300px;"></div> <!-- Outro gaveteiro -->
-      <div id="obstacle3" class="obstacle" style="top: 250px; left: 450px;"></div> <!-- Outro gaveteiro -->
+    <!-- JOGO -->
+    <div id="road" class="road hidden">
+        <div id="player" class="player"></div>
+        <div id="score" class="score">0</div>
     </div>
 
-    <!-- Controles de direção (para dispositivos móveis) -->
-    <div id="mobile-controls" class="mobile-controls">
-      <button id="left" class="control-btn">←</button>
-      <button id="right" class="control-btn">→</button>
-    </div>
-  </div>
+</div>
 
-  <script src="game.js"></script>
+<script src="game.js"></script>
 </body>
 </html>
