@@ -37,19 +37,26 @@ function move(dir) {
 // Função de controle de toque (mobile)
 function handleTouch(e) {
     const touchX = e.touches[0].clientX;
+    const sectionWidth = canvas.width / 5;  // Divide a tela em 5 partes iguais
 
-    // Se o toque for na metade esquerda
-    if (touchX < canvas.width / 2) {
-        move(-40); // Mover para a esquerda
+    // Ajusta a posição do personagem para a parte tocada
+    if (touchX < sectionWidth) {
+        playerX = sectionWidth / 2; // Move para a primeira seção
+    } else if (touchX < sectionWidth * 2) {
+        playerX = sectionWidth * 1.5; // Move para a segunda seção
+    } else if (touchX < sectionWidth * 3) {
+        playerX = sectionWidth * 2.5; // Move para a terceira seção
+    } else if (touchX < sectionWidth * 4) {
+        playerX = sectionWidth * 3.5; // Move para a quarta seção
     } else {
-        move(40); // Mover para a direita
+        playerX = sectionWidth * 4.5; // Move para a quinta seção
     }
 }
 
 // Detecta toque na tela (para dispositivos móveis)
 canvas.addEventListener("touchstart", (e) => {
     if (!running) startGame();  // Inicia o jogo ao tocar na tela
-    handleTouch(e);  // Mover para a esquerda ou direita com o toque
+    handleTouch(e);  // Mover o personagem para a área clicada
 });
 
 // Detecta toque na tela inicial (para iniciar o jogo no celular)
@@ -61,13 +68,13 @@ document.getElementById("startScreen").addEventListener("touchstart", (e) => {
 function drawRoad() {
     ctx.fillStyle = "#333"; // Cor de fundo (pista)
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Desenhando prateleiras/linha do escritório (simulando com linhas simples)
+
+    // Desenhando linhas para dividir a pista em 5 partes
     ctx.strokeStyle = "#999";
     ctx.lineWidth = 2;
-    for (let i = 0; i < canvas.height; i += 40) {
-        ctx.moveTo(0, i);
-        ctx.lineTo(canvas.width, i);
+    for (let i = 1; i <= 4; i++) {
+        ctx.moveTo(i * (canvas.width / 5), 0);
+        ctx.lineTo(i * (canvas.width / 5), canvas.height);
         ctx.stroke();
     }
 }
