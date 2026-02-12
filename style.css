@@ -1,0 +1,38 @@
+/* style.css - Estilo 8-bit para o jogo */
+
+/* Cor de fundo da tela */
+body {
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Contêiner do jogo (campo de jogo) */
+.game-container {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  background-color: #222;
+  border: 2px solid #fff;
+  overflow: hidden;
+}
+
+/* Estilo do Arquivista (personagem) */
+.player {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #00ff00; /* Arquivista em verde */
+}
+
+/* Estilo dos obstáculos (gaveteiros) */
+.obstacle {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #ff0000; /* Obstáculos vermelhos */
+}
