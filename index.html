@@ -11,7 +11,8 @@
     <!-- Tela inicial -->
     <div id="start-screen" class="start-screen">
       <h1 id="game-title">O Arquivista</h1>
-      <p id="start-message">Iniciar: Aperte Enter</p>
+      <p id="start-message">Iniciar: Aperte Enter ou toque em Iniciar</p>
+      <button id="start-btn" class="start-btn">Iniciar</button>
     </div>
 
     <!-- Jogo em si (invisível até que o jogo comece) -->
@@ -20,6 +21,12 @@
       <div id="obstacle1" class="obstacle" style="top: 50px; left: 150px;"></div> <!-- Gaveteiro -->
       <div id="obstacle2" class="obstacle" style="top: 150px; left: 300px;"></div> <!-- Outro gaveteiro -->
       <div id="obstacle3" class="obstacle" style="top: 250px; left: 450px;"></div> <!-- Outro gaveteiro -->
+    </div>
+
+    <!-- Controles de direção (para dispositivos móveis) -->
+    <div id="mobile-controls" class="mobile-controls">
+      <button id="left" class="control-btn">←</button>
+      <button id="right" class="control-btn">→</button>
     </div>
   </div>
 
