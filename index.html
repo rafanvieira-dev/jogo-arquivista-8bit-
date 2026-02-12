@@ -8,10 +8,19 @@
 </head>
 <body>
   <div class="game-container">
-    <div id="player" class="player"></div> <!-- Arquivista -->
-    <div id="obstacle1" class="obstacle" style="top: 50px; left: 150px;"></div> <!-- Gaveteiro -->
-    <div id="obstacle2" class="obstacle" style="top: 150px; left: 300px;"></div> <!-- Outro gaveteiro -->
-    <div id="obstacle3" class="obstacle" style="top: 250px; left: 450px;"></div> <!-- Outro gaveteiro -->
+    <!-- Tela inicial -->
+    <div id="start-screen" class="start-screen">
+      <h1 id="game-title">O Arquivista</h1>
+      <p id="start-message">Iniciar: Aperte Enter</p>
+    </div>
+
+    <!-- Jogo em si (invisível até que o jogo comece) -->
+    <div id="game-screen" class="game-screen" style="display: none;">
+      <div id="player" class="player"></div> <!-- Arquivista -->
+      <div id="obstacle1" class="obstacle" style="top: 50px; left: 150px;"></div> <!-- Gaveteiro -->
+      <div id="obstacle2" class="obstacle" style="top: 150px; left: 300px;"></div> <!-- Outro gaveteiro -->
+      <div id="obstacle3" class="obstacle" style="top: 250px; left: 450px;"></div> <!-- Outro gaveteiro -->
+    </div>
   </div>
 
   <script src="game.js"></script>
