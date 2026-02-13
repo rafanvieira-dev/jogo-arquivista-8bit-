@@ -1,7 +1,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let playerX = 140; // Posição inicial do personagem (vai mudar para as 5 partes)
+let playerX = 140;
 let playerY = 420;
 let speed = 2;
 let score = 0;
