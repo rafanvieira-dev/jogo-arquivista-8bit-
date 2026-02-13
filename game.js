@@ -9,7 +9,7 @@ let record = localStorage.getItem("record") || 0;
 
 let obstacles = [];
 let running = false;
-const sections = 5; // Dividindo o cenário em 5 partes horizontais
+const sections = 5; // Divisão da pista em 5 partes
 
 // Tela de início - Exibe mensagem
 function showStartScreen() {
@@ -18,21 +18,19 @@ function showStartScreen() {
     ctx.font = "30px Arial";
     ctx.textAlign = "center";
     ctx.fillText("O Arquivista", canvas.width / 2, canvas.height / 2 - 40);
-    ctx.font = "18px Arial";
-    if (!running) { 
-        ctx.fillText("Pressione Enter ou Toque para Iniciar", canvas.width / 2, canvas.height / 2 + 20);
-    }
+    ctx.font = "20px Arial";
+    ctx.fillText("Iniciar", canvas.width / 2, canvas.height / 2 + 40);
 }
 
 // Função para iniciar o jogo
 function startGame() {
     running = true;
     score = 0;
-    playerX = Math.floor(sections / 2) * (canvas.width / sections); // Inicia o personagem no centro
+    playerX = Math.floor(sections / 2) * (canvas.width / sections); // Inicia no centro
     obstacles = [];
     speed = 2;
     gameLoop();
-    
+
     // Esconde a tela HTML inicial
     const startEl = document.getElementById('startScreen');
     if (startEl) startEl.classList.add('hidden');
@@ -41,10 +39,10 @@ function startGame() {
 // Evento de tecla para iniciar o jogo
 document.addEventListener("keydown", (e) => {
     if (!running && e.key === "Enter") startGame();
-    // Movimento das setas
+    // Movimento com setas
     if (running) {
-        if (e.key === "ArrowLeft" && playerX > 0) playerX -= canvas.width / sections; // Mover para a esquerda
-        if (e.key === "ArrowRight" && playerX < canvas.width - (canvas.width / sections)) playerX += canvas.width / sections; // Mover para a direita
+        if (e.key === "ArrowLeft" && playerX > 0) playerX -= canvas.width / sections;
+        if (e.key === "ArrowRight" && playerX < canvas.width - (canvas.width / sections)) playerX += canvas.width / sections;
     }
 });
 
@@ -68,24 +66,28 @@ function handleTouch(e) {
 
 // Detecta toque na tela (para dispositivos móveis)
 canvas.addEventListener("touchstart", (e) => {
-    if (!running) {
-        startGame();
-    } else {
-        handleTouch(e);
-    }
+    if (!running) startGame();
+    handleTouch(e);
 });
 
 // Desenha o personagem
 function drawPlayer() {
-    ctx.fillStyle = "#00FF00";
-    ctx.fillRect(playerX, playerY, canvas.width / sections - 5, 30); // Corpo do personagem ajustado às seções
+    ctx.fillStyle = "#F4C542"; // Cor para o "corpo humano"
+    ctx.fillRect(playerX, playerY, canvas.width / sections - 5, 30); // Corpo do personagem ajustado
+
+    ctx.fillStyle = "#00AEEF"; // Cor para as roupas
+    ctx.fillRect(playerX, playerY + 30, canvas.width / sections - 5, 30); // Roupa do personagem
+
+    ctx.fillStyle = "#8B8B8B"; // Cor para as mãos
+    ctx.fillRect(playerX + 5, playerY + 60, 10, 15); // Mãos
+    ctx.fillRect(playerX + canvas.width / sections - 15, playerY + 60, 10, 15); // Mãos
 }
 
-// Desenha obstáculos
+// Desenha obstáculos (gavetas)
 function drawObstacles() {
-    ctx.fillStyle = "#888";
+    ctx.fillStyle = "#888"; // Cor das gavetas
     obstacles.forEach(obs => {
-        ctx.fillRect(obs.x, obs.y, canvas.width / sections - 5, 60); // Ajustando a largura do obstáculo às seções
+        ctx.fillRect(obs.x, obs.y, canvas.width / sections - 5, 60);
 
         ctx.strokeStyle = "#444";
         ctx.lineWidth = 2;
@@ -98,11 +100,7 @@ function drawObstacles() {
     });
 }
 
-function spawnObstacle() {
-    let obstacleX = Math.floor(Math.random() * (sections - 1)) * (canvas.width / sections); // Coloca obstáculos aleatoriamente em 4 das 5 seções
-    obstacles.push({ x: obstacleX, y: -60 });
-}
-
+// Função de colisão
 function collide(a, b) {
     return !(a.right < b.left ||
              a.left > b.right ||
@@ -110,11 +108,12 @@ function collide(a, b) {
              a.top > b.bottom);
 }
 
+// Desenha a pontuação e o recorde
 function drawScore() {
     ctx.fillStyle = "#fff";
     ctx.font = "16px Arial";
-    ctx.fillText("Pontos: " + score, 10, 40); // Ajustando a posição para evitar cortar
-    ctx.fillText("Recorde: " + record, canvas.width - 100, 40); // Ajustando a posição
+    ctx.fillText("Pontos: " + score, 10, 20);
+    ctx.fillText("Recorde: " + record, canvas.width - 100, 20);
 }
 
 function gameLoop() {
@@ -153,5 +152,11 @@ setInterval(() => {
     if (running) spawnObstacle();
 }, 900);
 
-// Mostra a tela inicial quando a página carrega
+// Geração de obstáculos
+function spawnObstacle() {
+    let obstacleX = Math.floor(Math.random() * (sections - 1)) * (canvas.width / sections);
+    obstacles.push({ x: obstacleX, y: -60 });
+}
+
+// Mostrar a tela inicial ao carregar a página
 window.onload = showStartScreen;
